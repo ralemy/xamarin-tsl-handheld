@@ -12,6 +12,7 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
@@ -54,5 +55,6 @@ namespace Tsl.Core.ViewModel
         {
             // TODO Clear the ViewModels
         }
-    }
+
+	}
 }
