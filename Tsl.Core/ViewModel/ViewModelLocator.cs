@@ -36,12 +36,21 @@ namespace Tsl.Core.ViewModel
 
 			ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 			var container = SimpleIoc.Default;
+			var navigation = new NavigationManager();
 
-			container.Register<INavigationService>(() => new NavigationServices());
+			container.Register<INavigationService>(() => navigation);
+			container.Register<INavigationManager>(() => navigation);
 			container.Register<IDispatcher>(() => new Dispatcher());
 
 			AlreadyInjected = true;
         }
+
+		public static T GetDependency<T>()
+		{
+			return (SimpleIoc.Default.IsRegistered<T>()) ?
+				SimpleIoc.Default.GetInstance<T>() :
+						 default(T);
+		}
 
         public static MainViewModel Main
         {
