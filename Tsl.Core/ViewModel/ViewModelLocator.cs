@@ -28,7 +28,10 @@ namespace Tsl.Core.ViewModel
     {
 		private static bool AlreadyInjected = false;
         /// <summary>
-        /// Initializes a new instance of the ViewModelLocator class.
+        /// Registers the following Dependencies:
+		/// 1- INavigationService: used to Navigate to app pages following MVVMLight protocol
+		/// 2- INavigationManager: used to register app pages
+		/// 3- IDispatcher: used to ensure that code is dispatched to the main thread for UI double binding
         /// </summary>
         public static void InjectDependencies()
         {
@@ -40,7 +43,9 @@ namespace Tsl.Core.ViewModel
 
 			container.Register<INavigationService>(() => navigation);
 			container.Register<INavigationManager>(() => navigation);
-			container.Register<IDispatcher>(() => new Dispatcher());
+			container.Register<IUIRunner>(() => new UIRunner());
+			container.Register<TslReaderInfo>();
+			container.Register<ConnectViewModel>(true);
 
 			AlreadyInjected = true;
         }
@@ -52,11 +57,28 @@ namespace Tsl.Core.ViewModel
 						 default(T);
 		}
 
-        public static MainViewModel Main
+		public static string ConnectPageKey { get { return ConnectViewModel.PageKey;} }
+
+		public static void Register<T> () where T: class
+		{
+			if(!SimpleIoc.Default.IsRegistered<T>())
+				SimpleIoc.Default.Register<T>();
+		}
+
+		public static void RegisterPages(INavigationManager navigation)
+		{
+			if (navigation == null)
+				throw new ArgumentNullException(nameof(navigation),"Navigation Manager not registered. call InjectDependencies() before this function");
+			navigation.Register(ConnectViewModel.PageKey, typeof(ConnectPage));
+
+		}
+
+
+        public static ConnectViewModel Main
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return ServiceLocator.Current.GetInstance<ConnectViewModel>();
             }
         }
         
@@ -65,5 +87,5 @@ namespace Tsl.Core.ViewModel
             // TODO Clear the ViewModels
         }
 
-	}
+}
 }

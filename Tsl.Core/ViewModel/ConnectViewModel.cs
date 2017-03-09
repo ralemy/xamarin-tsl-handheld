@@ -16,10 +16,12 @@ namespace Tsl.Core.ViewModel
     /// </summary>
     public class ConnectViewModel : ViewModelBase
     {
-        public ConnectViewModel()
+		public TslReaderInfo ReaderInfo { get; private set; }
+        public ConnectViewModel(TslReaderInfo readerInfo)
         {
+			ReaderInfo = readerInfo;
         }
-		public string PageKey
+		public static string PageKey
 		{
 			get
 			{

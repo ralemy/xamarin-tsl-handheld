@@ -34,12 +34,15 @@
     <Compile Include="ViewModel\ConnectViewModel.cs" />
     <Compile Include="Interfaces\IUIRunner.cs" />
     <Compile Include="Services\UIRunner.cs" />
-    <Compile Include="ViewConfigurator.cs" />
     <Compile Include="Interfaces\INavigationManager.cs" />
     <Compile Include="Services\NavigationManager.cs" />
     <Compile Include="Views\ConnectPage.xaml.cs">
       <DependentUpon>ConnectPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ReaderInfoService.cs" />
+    <Compile Include="Models\TslReaderInfo.cs" />
+    <Compile Include="Models\TslReaderSerials.cs" />
+    <Compile Include="Models\TslReaderVersions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">
@@ -81,6 +84,7 @@
     <Folder Include="Services\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Views\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\ConnectPage.xaml">

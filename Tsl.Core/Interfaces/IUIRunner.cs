@@ -1,8 +1,8 @@
 ﻿using System;
 namespace Tsl.Core
 {
-	public interface IDispatcher
+	public interface IUIRunner
 	{
-		void InvokeOnUserInterfaceThread(Action action);
+		void RunOnUIThread(Action action);
 	}
 }

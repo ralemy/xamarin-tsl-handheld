@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Tsl.Core.ViewModel;
 using Xamarin.Forms;
 
 namespace Tsl.Core
@@ -10,6 +10,7 @@ namespace Tsl.Core
 		public ConnectPage()
 		{
 			InitializeComponent();
+			this.BindingContext = ViewModelLocator.GetDependency<ConnectViewModel>();
 		}
 	}
 }
