@@ -43,6 +43,9 @@
     <Compile Include="Models\TslReaderInfo.cs" />
     <Compile Include="Models\TslReaderSerials.cs" />
     <Compile Include="Models\TslReaderVersions.cs" />
+    <Compile Include="Services\TagMonitor.cs" />
+    <Compile Include="Models\TagData.cs" />
+    <Compile Include="Interfaces\ITagMonitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">

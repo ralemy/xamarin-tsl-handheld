@@ -17,6 +17,8 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
+using TechnologySolutions.Rfid.AsciiProtocol;
+using TechnologySolutions.Rfid.AsciiProtocol.Commands;
 
 namespace Tsl.Core.ViewModel
 {
@@ -40,12 +42,18 @@ namespace Tsl.Core.ViewModel
 			ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 			var container = SimpleIoc.Default;
 			var navigation = new NavigationManager();
-
+			var tagMonitor = TagMonitor.InventoryMonitorFactory();
 			container.Register<INavigationService>(() => navigation);
 			container.Register<INavigationManager>(() => navigation);
 			container.Register<IUIRunner>(() => new UIRunner());
 			container.Register<TslReaderInfo>();
 			container.Register<ConnectViewModel>(true);
+
+			container.Register<SwitchAsynchronousResponder>();
+
+			container.Register<IAsciiCommandResponder>(()=>tagMonitor, "RFIDResponder");
+			container.Register<ITagMonitor>(() => tagMonitor);
+
 
 			AlreadyInjected = true;
         }
