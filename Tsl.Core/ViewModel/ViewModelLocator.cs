@@ -28,35 +28,66 @@ namespace Tsl.Core.ViewModel
     /// </summary>
     public static class ViewModelLocator
     {
+		private static readonly string _tagResponderKey = "RFIDResponder";
+		private static readonly string _barcodeResponderKey = "BarcodeResponder";
+
 		private static bool AlreadyInjected = false;
-        /// <summary>
-        /// Registers the following Dependencies:
+		/// <summary>
+		/// Registers the following Dependencies:
 		/// 1- INavigationService: used to Navigate to app pages following MVVMLight protocol
 		/// 2- INavigationManager: used to register app pages
 		/// 3- IDispatcher: used to ensure that code is dispatched to the main thread for UI double binding
-        /// </summary>
-        public static void InjectDependencies()
-        {
+		/// </summary>
+		public static void InjectDependencies()
+		{
 			if (AlreadyInjected) return;
 
 			ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 			var container = SimpleIoc.Default;
 			var navigation = new NavigationManager();
-			var tagMonitor = TagMonitor.InventoryMonitorFactory();
-			container.Register<INavigationService>(() => navigation);
-			container.Register<INavigationManager>(() => navigation);
+
+			container.Register<INavigationService>(() => new NavigationManager());
+			container.Register(() => 
+			                   container.GetInstance<INavigationService>() 
+			                   as INavigationManager);
+			
 			container.Register<IUIRunner>(() => new UIRunner());
 			container.Register<TslReaderInfo>();
 			container.Register<ConnectViewModel>(true);
 
-			container.Register<SwitchAsynchronousResponder>();
-
-			container.Register<IAsciiCommandResponder>(()=>tagMonitor, "RFIDResponder");
-			container.Register<ITagMonitor>(() => tagMonitor);
-
+			container.Register(() => AddResponders(container, new AsciiCommander()));
+			container.Register(() => container.GetInstance<IAsciiCommander>()
+			                   as IAsciiSerialTransportConsumer);
 
 			AlreadyInjected = true;
-        }
+		}
+
+		static void RegisterResponders(SimpleIoc container)
+		{
+			container.Register<SwitchAsynchronousResponder>();
+
+			container.Register<IAsciiCommandResponder>(() => TagMonitor.InventoryMonitorFactory(), _tagResponderKey);
+			container.Register(() =>
+							   container.GetInstance<IAsciiCommandResponder>(_tagResponderKey)
+							   as ITagMonitor);
+
+			container.Register<IAsciiCommandResponder>(() => new BarcodeMonitor(), _barcodeResponderKey);
+			container.Register(() =>
+							   container.GetInstance<IAsciiCommandResponder>(_barcodeResponderKey)
+							   as IBarcodeMonitor);
+		}
+
+		static IAsciiCommander AddResponders(SimpleIoc container, AsciiCommander asciiCommander)
+		{
+
+			RegisterResponders(container);
+
+			asciiCommander.AddSynchronousResponder();
+			asciiCommander.AddResponder(container.GetInstance<IAsciiCommandResponder>(_tagResponderKey));
+			asciiCommander.AddResponder(container.GetInstance<IAsciiCommandResponder>(_barcodeResponderKey));
+			asciiCommander.AddResponder(container.GetInstance<SwitchAsynchronousResponder>());
+			return asciiCommander;
+		}
 
 		public static T GetDependency<T>()
 		{

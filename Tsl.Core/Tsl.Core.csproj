@@ -46,6 +46,9 @@
     <Compile Include="Services\TagMonitor.cs" />
     <Compile Include="Models\TagData.cs" />
     <Compile Include="Interfaces\ITagMonitor.cs" />
+    <Compile Include="Services\BarcodeMonitor.cs" />
+    <Compile Include="Interfaces\IBarcodeMonitor.cs" />
+    <Compile Include="Models\BarcodeData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">
