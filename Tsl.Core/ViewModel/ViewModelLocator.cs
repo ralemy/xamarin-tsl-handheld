@@ -13,12 +13,11 @@
 */
 
 using System;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using TechnologySolutions.Rfid.AsciiProtocol;
-using TechnologySolutions.Rfid.AsciiProtocol.Commands;
+using TechnologySolutions.Rfid.AsciiProtocol.Extensions;
 
 namespace Tsl.Core.ViewModel
 {
@@ -44,20 +43,23 @@ namespace Tsl.Core.ViewModel
 
 			ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 			var container = SimpleIoc.Default;
-			var navigation = new NavigationManager();
 
 			container.Register<INavigationService>(() => new NavigationManager());
-			container.Register(() => 
-			                   container.GetInstance<INavigationService>() 
-			                   as INavigationManager);
-			
+			container.Register(() =>
+							   container.GetInstance<INavigationService>()
+							   as INavigationManager);
+
+			container.Register<IReaderConnectionManager>(() => new ReaderConnectionManager());
+
+
 			container.Register<IUIRunner>(() => new UIRunner());
 			container.Register<TslReaderInfo>();
 			container.Register<ConnectViewModel>(true);
 
+
 			container.Register(() => AddResponders(container, new AsciiCommander()));
 			container.Register(() => container.GetInstance<IAsciiCommander>()
-			                   as IAsciiSerialTransportConsumer);
+							   as IAsciiSerialTransportConsumer);
 
 			AlreadyInjected = true;
 		}

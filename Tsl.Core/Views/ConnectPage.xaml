@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-	x:Class="Tsl.Core.ConnectPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Tsl.Core.ConnectPage">
+	<ContentPage.Title>Select TSL Reader</ContentPage.Title>
+	<ContentPage.Padding>
+		<OnPlatform x:TypeArguments="Thickness" iOS="20, 40, 20, 20" Android="20, 20, 20, 20" WinPhone="20, 20, 20, 20" />
+	</ContentPage.Padding>
 	<ContentPage.Content>
-		<StackLayout Padding="30">
-		<Label Text="{Binding ReaderInfo.Model}"/>
-		<Entry Text="{Binding ReaderInfo.Model}"/>
-		<Label Text="{Binding ReaderInfo.Serials.Device}"/>
-		<Entry Text="{Binding ReaderInfo.Serials.Device}"/>
-		</StackLayout>
+		 <StackLayout VerticalOptions="FillAndExpand"
+               HorizontalOptions="FillAndExpand"
+               Orientation="Vertical"
+               Spacing="4">
+    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="0" Padding="0">
+    	<Button Text="Refresh" Command="{Binding RefreshListCommand}" HorizontalOptions="Start" />
+      	<Label Text="{Binding InformationMessage}" VerticalOptions="Center" HorizontalOptions="FillAndExpand" WidthRequest="1" HeightRequest="48" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" FontSize="16"/>
+      <Button Text="Add Reader" Command="{Binding AddNewCommand}" HorizontalOptions="End" VerticalOptions="CenterAndExpand"/>
+    </StackLayout>
+    <ListView ItemsSource="{Binding Readers}" SelectedItem="{Binding SelectedReader, Mode=TwoWay}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand"
+               HorizontalOptions="FillAndExpand" Spacing="0" Padding="0">
+                <Label Text="{Binding DisplayName}" FontSize="18" />
+                <Label Text="{Binding DisplayInfoLine}" FontSize="12" />
+              </StackLayout>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+    <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+      <StackLayout Orientation="Horizontal" VerticalOptions="StartAndExpand">
+        <Button Text="Connect" Command="{Binding ConnectCommand}" HorizontalOptions="FillAndExpand" WidthRequest="1" HeightRequest="64"/>
+      <ActivityIndicator Color="Blue" IsRunning="{Binding IsBusy}" HorizontalOptions="Center" HeightRequest="40" VerticalOptions="Center"/>
+        <Button Text="Disconnect" Command="{Binding DisconnectCommand}" HorizontalOptions="FillAndExpand" WidthRequest="1"  HeightRequest="64"/>
+      </StackLayout>
+  </StackLayout>
 	</ContentPage.Content>
 </ContentPage>

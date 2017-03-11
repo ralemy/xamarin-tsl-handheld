@@ -15,7 +15,7 @@ namespace Tsl.Core
 			_barcode.BarcodeReceived += (sender, e) =>
 			{
 				if (Enable)
-					BarcodeReceivedHandler?.Invoke(this, new BarcodeData(e);
+					BarcodeReceivedHandler?.Invoke(this, new BarcodeData(e));
 			};
 		}
 

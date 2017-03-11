@@ -10,7 +10,7 @@ namespace Tsl.Core
 		public ConnectPage()
 		{
 			InitializeComponent();
-			this.BindingContext = ViewModelLocator.GetDependency<ConnectViewModel>();
+			this.BindLifeCycle(ViewModelLocator.GetDependency<ConnectViewModel>());
 		}
 	}
 }
