@@ -51,6 +51,7 @@
     <Compile Include="Models\BarcodeData.cs" />
     <Compile Include="Helpers\PageLifeCycle.cs" />
     <Compile Include="Helpers\ILifeCycle.cs" />
+    <Compile Include="Models\InventoryConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">

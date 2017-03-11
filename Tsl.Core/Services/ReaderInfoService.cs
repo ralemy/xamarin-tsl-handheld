@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Messaging;
 using TechnologySolutions.Rfid.AsciiProtocol;
 using TechnologySolutions.Rfid.AsciiProtocol.Commands;
@@ -18,6 +19,35 @@ namespace Tsl.Core
 			return _connection.ConnectedReader;
 		}
 
+		public async Task ConfigureReader(InventoryConfig config)
+		{
+			var command = new InventoryCommand();
+			command.TakeNoAction = true;
+			command.ResetParameters = true;
+			command.OutputPower = config.Power;
+			command.FilterStrongest = BoolToTriState(config.StrongestTag);
+			command.IncludeTransponderRssi = BoolToTriState(config.IncludeRssi);
+			await Task.Run(() =>
+			{
+				try
+				{
+					_commander.Execute(command);
+				}
+				catch (Exception ex)
+				{
+					LogException(ex.Message);	
+				}
+			});
+		}
+
+		void LogException(string message)
+		{
+		}
+
+		TriState? BoolToTriState(bool? flag)
+		{
+			return flag.HasValue && (bool)flag ? TriState.Yes : TriState.No;
+		}
 
 		public ReaderInfoService(IReaderConnectionManager readerConnectionManager, IAsciiSerialTransportConsumer consumer, TslReaderInfo readerInfo)
 		{
