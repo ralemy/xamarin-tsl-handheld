@@ -60,7 +60,7 @@ namespace Tsl.Core.ViewModel
 			container.Register(() => AddResponders(container, new AsciiCommander()));
 			container.Register(() => container.GetInstance<IAsciiCommander>()
 							   as IAsciiSerialTransportConsumer);
-
+			container.Register<ReaderInfoService>(true);
 			AlreadyInjected = true;
 		}
 

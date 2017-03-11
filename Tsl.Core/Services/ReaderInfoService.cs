@@ -8,16 +8,21 @@ namespace Tsl.Core
 {
 	public class ReaderInfoService
 	{
-		private readonly IAsciiSerialTransportConsumer _commander;
-
+		private readonly IAsciiSerialTransportConsumer _consumer;
+		private readonly IAsciiCommander _commander;
 		private readonly IReaderConnectionManager _connection;
-
 		private readonly TslReaderInfo _info;
 
-
-		public ReaderInfoService(IReaderConnectionManager readerConnectionManager, IAsciiSerialTransportConsumer commander, TslReaderInfo readerInfo)
+		public INamedReader ConnectedReader()
 		{
-			_commander = commander;
+			return _connection.ConnectedReader;
+		}
+
+
+		public ReaderInfoService(IReaderConnectionManager readerConnectionManager, IAsciiSerialTransportConsumer consumer, TslReaderInfo readerInfo)
+		{
+			_consumer = consumer;
+			_commander = consumer as IAsciiCommander;
 			_connection = readerConnectionManager;
 			_info = readerInfo;
 
@@ -34,31 +39,30 @@ namespace Tsl.Core
 
 		void DisconnectFromReader()
 		{
-			if (_commander.Transport != null)
+			if (_consumer.Transport != null)
 				Messenger.Default.Send(new GenericMessage<TslReaderInfo>(null));
-			_commander.Transport = null;
+			_consumer.Transport = null;
 		}
 
 		void ConnectToReader()
 		{
-			var commander = _commander as IAsciiCommander;
-			_commander.Transport = _connection.ConnectionTransport;
+			_consumer.Transport = _connection.ConnectionTransport;
 			if (_connection.ConnectedReader != null)
-				SetReader(commander , new VersionInformationCommand(), 0);
+				SetReader(new VersionInformationCommand(), 0);
 		}
 
-		bool SetReader(IAsciiCommander commander, VersionInformationCommand version, int tries)
+		bool SetReader(VersionInformationCommand version, int tries)
 		{
 
 			if (tries > 2) 
 				return false;
 
-			commander.Execute(new AbortCommand());
-			commander.Execute(new FactoryDefaultsCommand());
-			commander.Execute(version);
+			_commander.Execute(new AbortCommand());
+			_commander.Execute(new FactoryDefaultsCommand());
+			_commander.Execute(version);
 
 			if (!version.Response.IsSuccessful)
-				return SetReader(commander, new VersionInformationCommand(), tries +1);
+				return SetReader(new VersionInformationCommand(), tries +1);
 
 			_info.Update(version);
 			Messenger.Default.Send(new GenericMessage<TslReaderInfo>(_info));
