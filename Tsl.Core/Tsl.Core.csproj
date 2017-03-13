@@ -39,7 +39,7 @@
     <Compile Include="Views\ConnectPage.xaml.cs">
       <DependentUpon>ConnectPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\ReaderInfoService.cs" />
+    <Compile Include="Services\ReaderService.cs" />
     <Compile Include="Models\TslReaderInfo.cs" />
     <Compile Include="Models\TslReaderSerials.cs" />
     <Compile Include="Models\TslReaderVersions.cs" />
@@ -52,6 +52,9 @@
     <Compile Include="Helpers\PageLifeCycle.cs" />
     <Compile Include="Helpers\ILifeCycle.cs" />
     <Compile Include="Models\InventoryConfig.cs" />
+    <Compile Include="Models\SwitchConfig.cs" />
+    <Compile Include="Models\ConfigBase.cs" />
+    <Compile Include="Models\BarcodeConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Xamarin.Forms.Core">

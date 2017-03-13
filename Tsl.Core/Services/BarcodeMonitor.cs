@@ -4,15 +4,20 @@ using TechnologySolutions.Rfid.AsciiProtocol.Commands;
 
 namespace Tsl.Core
 {
-	public class BarcodeMonitor : IBarcodeMonitor , IAsciiCommandResponder
+	public class BarcodeMonitor : IBarcodeMonitor, IAsciiCommandResponder
 	{
-		BarcodeCommand _barcode;
+		BarcodeCommand _command;
 
 		public BarcodeMonitor()
 		{
 			Enable = true;
-			_barcode = new BarcodeCommand();
-			_barcode.BarcodeReceived += (sender, e) =>
+			_command = new BarcodeCommand();
+			OnBarcodeReceived(_command);
+		}
+
+		public void OnBarcodeReceived(BarcodeCommand command)
+		{
+			command.BarcodeReceived += (sender, e) =>
 			{
 				if (Enable)
 					BarcodeReceivedHandler?.Invoke(this, new BarcodeData(e));
@@ -25,7 +30,7 @@ namespace Tsl.Core
 
 		public bool ProcessReceivedLine(IAsciiResponseLine line, bool moreLinesAvailable)
 		{
-			return _barcode.Responder.ProcessReceivedLine(line, moreLinesAvailable);
+			return _command.Responder.ProcessReceivedLine(line, moreLinesAvailable);
 		}
 	}
 }

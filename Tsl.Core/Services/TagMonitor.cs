@@ -28,16 +28,21 @@ namespace Tsl.Core
 		{
 			Enabled = true;
 			_command = command;
-			_command.TransponderReceived += TagReceived;
-			_command.Response.CommandComplete += ReceiveComplete;
+			OnTagReceived(_command);
+		}
+
+		public void OnTagReceived(TranspondersCommandBase command)
+		{
+			command.TransponderReceived += TagReceived;
+			command.Response.CommandComplete += ReceiveComplete;
 		}
 
 		protected virtual void TagReceived(object sender, TransponderDataEventArgs e)
 		{
-			if (!Enabled) return;
-			cache.Add(e.Transponder);
+			if (Enabled)
+				cache.Add(e.Transponder);
 			if (ShouldDispatch(e))
-				TagReceivedHandler?.Invoke(this, new TagData(Flush(), !_commandCompleted));
+				Dispatch(!_commandCompleted);
 		}
 
 		private List<TransponderData> Flush()
@@ -50,22 +55,29 @@ namespace Tsl.Core
 
 		bool ShouldDispatch(TransponderDataEventArgs e)
 		{
-			if (!Enabled) return false;
-			if (e.MoreAvailable)
-				if (cache.Count < _maxCacheCount)
-					if (RecentSend())
-						return false;
-			return true;
+			if (!Enabled) 
+				return false;
+			if (!e.MoreAvailable)
+				return true;
+			if (cache.Count > _maxCacheCount)
+				return true;
+			return OldSend();
 		}
 
-		bool RecentSend()
+		bool OldSend()
 		{
-			return DateTime.Now.Subtract(lastSentTime).TotalMilliseconds < _maxTimeBetweenSends;
+			return DateTime.Now.Subtract(lastSentTime).TotalMilliseconds > _maxTimeBetweenSends;
+		}
+
+		void Dispatch(bool completed)
+		{
+			TagReceivedHandler?.Invoke(this, new TagData(Flush(), completed));
+			lastSentTime = DateTime.Now;
 		}
 
 		void ReceiveComplete(object sender, EventArgs e)
 		{
-			TagReceivedHandler?.Invoke(this, new TagData(Flush(), _commandCompleted));
+			Dispatch(_commandCompleted);
 		}
 
 		public bool ProcessReceivedLine(IAsciiResponseLine line, bool moreLinesAvailable)
